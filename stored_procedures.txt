@@ -1,0 +1,172 @@
+CREATE TABLE university_picks(
+	id INT,
+	university_name VARCHAR(512) NOT NULL,
+	ranking INT,
+	PRIMARY KEY (id),
+    CONSTRAINT fk_up_uid FOREIGN KEY (id) REFERENCES university(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT uc_up_ranking UNIQUE (ranking)
+);
+
+DELIMITER $$
+CREATE PROCEDURE get_university_picks()
+BEGIN
+    SELECT id, university_name, ranking FROM university_picks ORDER BY ranking ASC;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE insert_university_pick(IN new_uni VARCHAR(512))
+BEGIN
+	DECLARE _rollback BOOL DEFAULT 0;
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET _rollback = 1;
+	START TRANSACTION;
+	SET @new_ranking = IFNULL((SELECT MAX(ranking)+1 FROM university_picks), 1);
+    INSERT INTO university_picks (id, university_name, ranking) SELECT u.id, u.name, @new_ranking FROM university AS u WHERE u.name = new_uni AND u.id NOT IN (SELECT id FROM university_picks);
+    IF _rollback THEN
+    	ROLLBACK;
+    ELSE
+    	COMMIT;
+    END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER update_rankings_on_university_delete
+BEFORE DELETE
+ON university
+FOR EACH ROW
+BEGIN
+	SET @deleted_ranking = (SELECT up.ranking FROM university_pick AS up WHERE up.id = OLD.id);
+	SET @uni_pick_exists = NOT ISNULL(@deleted_ranking);
+	IF @uni_pick_exists THEN
+		UPDATE university_picks AS up SET ranking = NULL WHERE up.id = OLD.id;
+		UPDATE university_picks SET ranking = ranking - 1 WHERE ranking > @deleted_ranking ORDER BY ranking ASC;
+	END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE delete_university_pick(IN uid INT, IN deleted_ranking INT)
+BEGIN
+	DECLARE _rollback BOOL DEFAULT 0;
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET _rollback = 1;
+	START TRANSACTION;
+	UPDATE university_picks SET ranking = NULL WHERE id = uid;
+	UPDATE university_picks SET ranking = ranking - 1 WHERE ranking > deleted_ranking ORDER BY ranking ASC;
+	DELETE FROM university_picks WHERE id = uid;
+    IF _rollback THEN
+    	ROLLBACK;
+    ELSE
+    	COMMIT;
+    END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE drop_ranking(IN uid INT, IN new_ranking INT, IN current_ranking INT)
+BEGIN
+	DECLARE _rollback BOOL DEFAULT 0;
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET _rollback = 1;
+	START TRANSACTION;
+	IF (new_ranking <= current_ranking) THEN
+		SIGNAL SQLSTATE ‘45000’ SET MESSAGE_TEXT = ‘New ranking has to be greater than current ranking to drop ranking’;
+	END IF;
+	UPDATE university_picks SET ranking = NULL WHERE id = uid;
+	UPDATE university_picks SET ranking = ranking - 1 WHERE ranking > current_ranking AND ranking <= new_ranking ORDER BY ranking ASC;
+	SET @nr = (SELECT LEAST(MAX(ranking)+1, new_ranking) FROM university_picks);
+	UPDATE university_picks SET ranking = @nr WHERE id = uid;
+    IF _rollback THEN
+    	ROLLBACK;
+    ELSE
+    	COMMIT;
+    END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE raise_ranking(IN uid INT, IN new_ranking INT, IN current_ranking INT)
+BEGIN
+	DECLARE _rollback BOOL DEFAULT 0;
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET _rollback = 1;
+	START TRANSACTION;
+	IF (new_ranking >= current_ranking) THEN
+		SIGNAL SQLSTATE ‘45000’ SET MESSAGE_TEXT = ‘New ranking has to be less than current ranking to raise ranking’;
+	END IF;
+	UPDATE university_picks SET ranking = NULL WHERE id = uid;
+	UPDATE university_picks SET ranking = ranking + 1 WHERE ranking < current_ranking AND ranking >= new_ranking ORDER BY ranking DESC;
+	SET @nr = GREATEST(1, new_ranking);
+	UPDATE university_picks SET ranking = @nr WHERE id = uid;
+    IF _rollback THEN
+    	ROLLBACK;
+    ELSE
+    	COMMIT;
+    END IF;
+END $$
+DELIMITER ;
+
+CREATE TABLE professor_university_pick (
+	university_id INT,
+	professor_id INT,
+	keyword_id INT NOT NULL,
+	professor_name VARCHAR(512) NOT NULL,
+	research_interest VARCHAR(512) NOT NULL,
+	PRIMARY KEY (university_id, professor_id),
+	CONSTRAINT fk_pup_uid FOREIGN KEY (university_id) REFERENCES university_picks(id) ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT fk_pup_pid FOREIGN KEY (professor_id) REFERENCES faculty(id) ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT fk_pup_kid FOREIGN KEY (keyword_id) REFERENCES keyword(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+DELIMITER $$
+CREATE PROCEDURE get_professors_for_university_pick(IN uid INT)
+BEGIN
+    SELECT university_id, professor_id, professor_name, research_interest FROM professor_university_pick WHERE university_id = uid ORDER BY professor_name ASC;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE insert_professor_for_university_pick(IN uid INT, IN new_prof VARCHAR(512), IN new_keyword VARCHAR(512))
+BEGIN
+	DECLARE _rollback BOOL DEFAULT 0;
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET _rollback = 1;
+	START TRANSACTION;
+	SET @prof_id = (SELECT id FROM faculty WHERE name = new_prof AND university_id = uid);
+	SET @keyword_id = (SELECT id FROM keyword WHERE name = new_keyword);
+	SET @prof_exists = NOT ISNULL(@prof_id);
+	SET @keyword_exists = NOT ISNULL(@keyword_id);
+	IF @prof_exists AND @keyword_exists THEN
+		INSERT INTO professor_university_pick (university_id, professor_id, keyword_id, professor_name, research_interest) SELECT uid, fk.faculty_id, fk.keyword_id, new_prof, new_keyword FROM faculty_keyword AS fk WHERE fk.faculty_id = @prof_id AND fk.keyword_id = @keyword_id;
+	END IF;
+    IF _rollback THEN
+    	ROLLBACK;
+    ELSE
+    	COMMIT;
+    END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE delete_professor_for_university_pick(IN uid INT, IN pid INT)
+BEGIN
+    DELETE FROM professor_university_pick WHERE university_id = uid AND professor_id = pid;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE update_uni_pick_research_interest_for_prof(IN uid INT, IN pid INT, IN new_keyword VARCHAR(512))
+BEGIN
+	DECLARE _rollback BOOL DEFAULT 0;
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET _rollback = 1;
+	START TRANSACTION;
+	SET @keyword_id = (SELECT id FROM keyword WHERE name = new_keyword);
+	SET @keyword_exists = NOT ISNULL(@keyword_id);
+	SET @keyword_related_to_prof = NOT ISNULL((SELECT 1 FROM faculty_keyword WHERE faculty_id = pid AND keyword_id = @keyword_id));
+	IF @keyword_exists AND @keyword_related_to_prof THEN
+		UPDATE professor_university_pick SET keyword_id = @keyword_id, research_interest = new_keyword WHERE university_id = uid AND professor_id = pid;
+	END IF;
+    IF _rollback THEN
+    	ROLLBACK;
+    ELSE
+    	COMMIT;
+    END IF;
+END $$
+DELIMITER ;

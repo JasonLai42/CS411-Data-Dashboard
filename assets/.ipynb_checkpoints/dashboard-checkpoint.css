@@ -1,0 +1,457 @@
+.data-dashboard {
+    font-family: Arial;
+}
+
+.data-dashboard-title {
+    text-align: center;
+    font-size: 3rem;
+}
+
+.data-dashboard-grid {
+    display: grid;
+    /* grid-template-columns: 1fr 3fr;
+    grid-template-rows: 1fr min-content; */
+    grid-template-areas:
+                        "a b b b"
+                        "c b b b"
+                        "c d d d"
+                        "e e f f";
+}
+
+/*************************************************
+*                    Widget 1                    *
+*************************************************/
+
+.widget-1 {
+    width: 35rem;
+    height: 27rem;
+    background-color: #a3ccc5;
+    border: 2px solid #edbe8e;
+    border-radius: 0.5rem;
+    margin: 0.75rem;
+    grid-area: a;
+}
+
+.widget-1-label {
+    font-size: 18pt;
+    display: inline-block;
+    margin-left: 5.5rem;
+    margin-right: auto;
+    padding-top: 1rem;
+    float: left;
+}
+
+.widget-1-container {
+    margin-left: 1.45rem;
+    margin-right: auto;
+    margin-top: 1rem;
+    /* border: 1px solid black; */
+}
+
+.widget-1-dropdown {
+    width: 6.5rem;
+    margin-left: auto;
+    margin-right: 1.4rem;
+}
+
+.widget-1-big-message {
+    font-size: 3rem;
+    color: rgba(0, 0, 0, 0.25);
+    margin-left: 4.75rem;
+    margin-right: auto;
+    margin-top: 8.5rem;
+}
+
+.widget-1-data {
+    width: 32rem;
+    height: 21.5rem;
+    margin-top: -8rem;
+}
+
+/**************************************************
+*                 Widgets 2 and 3                 *
+**************************************************/
+
+.widgets-2-and-3 {
+    width: 55.3rem;
+    height: 43.75rem;
+    background-color: #a3ccc5;
+    border: 2px solid #edbe8e;
+    border-radius: 0.5rem;
+    margin: 0.75rem;
+    grid-area: b;
+}
+
+.widget-2-label {
+    font-size: 18pt;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: 6.25rem;
+    padding-top: 1.8rem;
+    float: right;
+}
+
+.widgets-2-and-3-container {
+    margin-left: 3rem;
+    margin-right: auto;
+    margin-top: 1.5rem;
+}
+
+.widgets-2-and-3-input-container {
+    width: 20.3rem;
+    height: 3.5rem;
+    /* border: 1px solid black; */
+}
+
+.widgets-2-and-3-input-flex-box {
+    width: 20.3rem;
+    display: flex;
+    gap: 8px;
+    /* border: 1px solid black; */
+}
+
+.widgets-2-and-3-input {
+    height: 30px;
+    font-size: 12pt;
+}
+
+.widgets-2-and-3-submit-button {
+    height: 36px;
+    font-size: 12pt;
+}
+
+.widget-2-container {
+    width: 49.25rem;
+    height: 23.4rem;
+    /*border: 1px solid black;*/
+}
+
+.widget-2-big-message {
+    font-size: 3rem;
+    color: rgba(0, 0, 0, 0.25);
+    margin-left: 13.5rem;
+    margin-right: auto;
+    margin-top: 7rem;
+}
+
+.widget-2-data {
+    width: 49.25rem;
+    height: 19rem;
+    margin-top: -6rem;
+}
+
+.widget-3-label {
+    font-size: 18pt;
+    display: inline-block;
+    margin-left: 15rem;
+    margin-right: auto;
+    padding-top: 2rem;
+}
+
+.widget-3-container {
+    width: 49.25rem;
+    height: 12.8rem;
+    /*border: 1px solid black;*/
+}
+
+.widget-3-big-message {
+    font-size: 3rem;
+    color: rgba(0, 0, 0, 0.25);
+    margin-left: 13.5rem;
+    margin-right: auto;
+    margin-top: 4.15rem;
+}
+
+.widget-3-hide-table-container:not(:has(div.dash-table-container td)) {
+    display: none;
+}
+
+/*************************************************
+*                    Widget 4                    *
+*************************************************/
+
+.widget-4 {
+    width: 35rem;
+    height: 37rem;
+    background-color: #a3ccc5;
+    border: 2px solid #edbe8e;
+    border-radius: 0.5rem;
+    margin: 0.75rem;
+    grid-area: c;
+}
+
+.widget-4-label {
+    font-size: 18pt;
+    display: inline-block;
+    margin-left: 2rem;
+    margin-right: auto;
+    padding-top: 1rem;
+    float: left;
+}
+
+.widget-4-container {
+    width: 31.8rem;
+    height: 31.75rem;
+    margin-left: 1.5rem;
+    margin-right: auto;
+    margin-top: 3.8rem;
+    /* border: 1px solid black; */
+}
+
+.widget-4-input-container {
+    width: 31.75rem;
+    height: 7.55rem;
+    /* border: 1px solid black; */
+}
+
+.widget-4-input-flex-box {
+    width: 25.85rem;
+    display: flex;
+    gap: 8px;
+    /* border: 1px solid black; */
+}
+
+.widget-4-input {
+    height: 30px;
+    font-size: 12pt;
+}
+
+.widget-4-submit-button {
+    height: 36px;
+    font-size: 12pt;
+    margin-top: 0.45rem;
+}
+
+.widget-4-big-message {
+    font-size: 3rem;
+    color: rgba(0, 0, 0, 0.25);
+    margin-left: 5rem;
+    margin-right: auto;
+    margin-top: 8rem;
+}
+
+.widget-4-hide-table-container:not(:has(div.dash-table-container td)) {
+    display: none;
+}
+
+/*************************************************
+*                    Widget 5                    *
+*************************************************/
+
+.widget-5 {
+    width: 55.3rem;
+    height: 20.3rem;
+    background-color: #a3ccc5;
+    border: 2px solid #edbe8e;
+    border-radius: 0.5rem;
+    margin: 0.75rem;
+    grid-area: d;
+}
+
+.widget-5-label {
+    font-size: 18pt;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: 5rem;
+    padding-top: 2rem;
+    float: right;
+}
+
+.widget-5-container {
+    width: 49.25rem;
+    height: 17rem;
+    margin-left: 3rem;
+    margin-right: auto;
+    margin-top: 1.5rem;
+    /* border: 1px solid black; */
+}
+
+.widget-5-input-container {
+    width: 30.7rem;
+    height: 3.5rem;
+    /* border: 1px solid black; */
+}
+
+.widget-5-input-flex-box {
+    width: 30.6rem;
+    display: flex;
+    gap: 8px;
+    /* border: 1px solid black; */
+}
+
+.widget-5-input {
+    width: 350px;
+    height: 30px;
+    font-size: 12pt;
+}
+
+.widget-5-submit-button {
+    height: 36px;
+    font-size: 12pt;
+}
+
+.widget-5-big-message {
+    font-size: 3rem;
+    color: rgba(0, 0, 0, 0.25);
+    margin-left: 13.5rem;
+    margin-right: auto;
+    margin-top: 4rem;
+}
+
+.widget-5-flex-box {
+    display: flex;
+    gap: 2rem;
+    margin-top: -3.3rem;
+}
+
+.widget-5-data-photoUrl {
+    object-fit: cover;
+    width: 205px;
+    height: 205px;
+}
+
+.widget-5-prof-info {
+    width: 17.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.widget-5-hide-table-container:not(:has(div.dash-table-container td)) {
+    display: none;
+}
+
+/*************************************************
+*                    Widget 6                    *
+*************************************************/
+
+.widget-6 {
+    width: 45.2rem;
+    height: 37.5rem;
+    background-color: #a3ccc5;
+    border: 2px solid #edbe8e;
+    border-radius: 0.5rem;
+    margin: 0.75rem;
+    grid-area: e;
+}
+
+.widget-6-label {
+    font-size: 18pt;
+    display: inline-block;
+    margin-left: 12rem;
+    margin-right: auto;
+    padding-top: 1rem;
+}
+
+.widget-6-container {
+    width: 41rem;
+    height: 27.3rem;
+    margin-left: 2rem;
+    margin-right: auto;
+    margin-top: 1rem;
+    /* border: 1px solid black; */
+}
+
+.widget-6-input-container {
+    width: 30.45rem;
+    height: 3.5rem;
+    /* border: 1px solid black; */
+}
+
+.widget-6-input-flex-box {
+    width: 30.4rem;
+    display: flex;
+    gap: 8px;
+    /* border: 1px solid black; */
+}
+
+.widget-6-input {
+    width: 350px;
+    height: 30px;
+    font-size: 12pt;
+}
+
+.widget-6-submit-button {
+    height: 36px;
+    font-size: 12pt;
+}
+
+.widget-6-big-message {
+    font-size: 3rem;
+    color: rgba(0, 0, 0, 0.25);
+    margin-left: 2.75rem;
+    margin-right: auto;
+    margin-top: 8rem;
+}
+
+.widget-6-hide-table-container:not(:has(div.dash-table-container td)) {
+    display: none;
+}
+
+/*************************************************
+*                    Widget 7                    *
+*************************************************/
+
+.widget-7 {
+    width: 45.2rem;
+    height: 37.5rem;
+    background-color: #a3ccc5;
+    border: 2px solid #edbe8e;
+    border-radius: 0.5rem;
+    margin: 0.75rem;
+    grid-area: f;
+}
+
+.widget-7-label {
+    font-size: 18pt;
+    display: inline-block;
+    margin-left: 1.8rem;
+    margin-right: auto;
+    padding-top: 1rem;
+}
+
+.widget-7-container {
+    width: 41rem;
+    height: 30.1rem;
+    margin-left: 2rem;
+    margin-right: auto;
+    margin-top: 1rem;
+    /* border: 1px solid black; */
+}
+
+.widget-7-input-container {
+    width: 31.75rem;
+    height: 6.25rem;
+    /* border: 1px solid black; */
+}
+
+.widget-7-input-flex-box {
+    width: 25.85rem;
+    display: flex;
+    gap: 8px;
+    /* border: 1px solid black; */
+}
+
+.widget-7-input {
+    height: 30px;
+    font-size: 12pt;
+}
+
+.widget-7-submit-button {
+    height: 36px;
+    font-size: 12pt;
+    margin-top: 0.45rem;
+}
+
+.widget-7-big-message {
+    font-size: 3rem;
+    color: rgba(0, 0, 0, 0.25);
+    margin-left: 10rem;
+    margin-right: auto;
+    margin-top: 8rem;
+}
+
+.widget-7-hide-table-container:not(:has(div.dash-table-container td)) {
+    display: none;
+}
